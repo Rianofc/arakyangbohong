@@ -448,14 +448,20 @@ app.all(/^\/y(outube|t)(\/(d(ownload|l)|search)?)?/, async (req, res) => {
 				return res.status(400).json({ success: false, message: 'Invalid url' })
 
 			const isAudio = obj.type !== 'video'
-			const payload = {
-				format: isAudio ? '0' : '1',
-				mp3Quality: obj.quality ? String(obj.quality) : '128',
-				mp4Quality: obj.quality ? String(obj.quality) : '720',
-				url: obj.url
-			}
+			let gg = await axios.post('https://cobalt-api.ayo.tf/', {
+                    url: obj.url,                     
+		downloadMode: isAudio, 
+				filenameStyle: 'pretty', 
+                   videoQuality: `360`
+                }, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                })
+			
 
-			const result = await utils.fetchOgMp3API(payload)
+			const result = gg.data.url
 			console.log(result)
 			if (!result) {
 				const msg = result?.message || 'An error occured'
